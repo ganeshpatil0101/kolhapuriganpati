@@ -14,6 +14,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
+import getFirebase from '../firebase-config';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -47,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Register({onSuccess, onError}) {
+function Register({onSuccess, onError, currentUser}) {
   const classes = useStyles();
   const [name, setName] = React.useState('');
   const [about, setAbout] = React.useState('');
@@ -55,17 +57,29 @@ function Register({onSuccess, onError}) {
   const [mobNo, setMobNo] = React.useState('');
   const history = useHistory();
   const navigateTo = () => history.push('/addganpati');
-
+  const firebase = getFirebase();
   function onSubmit(event) {
     event.preventDefault();
     console.log('email ----> ', name, about, regNo);
     onSuccess();
     return false;
   }
+  const logOut = () => {
+    if (firebase) {
+      // setIsLoading(true);
+      firebase.auth().signOut().then(()=>{ 
+        console.log(' logOut ');
+      });
+    }
+  };
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
+        {currentUser && currentUser.email && <Typography variant="caption" display="block" gutterBottom>
+          {currentUser.email}
+          <span onClick={logOut}> Logout </span>
+        </Typography>}
         <Avatar className={classes.avatar}>
           <AddOutlinedIcon />
         </Avatar>
@@ -148,5 +162,6 @@ function Register({onSuccess, onError}) {
 Register.propTypes = {
   onSuccess: PropTypes.func,
   onError: PropTypes.func,
+  currentUser: PropTypes.object,
 };
 export default Register;

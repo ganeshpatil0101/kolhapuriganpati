@@ -13,6 +13,9 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
+import getFirebase from '../firebase-config';
+import Loader from '../components/Loader';
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -50,16 +53,32 @@ function SignIn({onSuccess, onError}) {
   const classes = useStyles();
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
+  const firebaseInstance = getFirebase();
+  const [isLoading, setIsLoading] = React.useState(false);
   function onSubmit(event) {
     event.preventDefault();
-    console.log('email ----> ', email, pass);
-    onSuccess();
+    
+    try {
+      if (firebaseInstance) {
+        setIsLoading(true);
+        const user = firebaseInstance
+          .auth()
+          .signInWithEmailAndPassword(email, pass).then((user)=>{
+            console.log("user", user);
+            onSuccess();
+            setIsLoading(false);
+          }).catch(e => console.error('====>',e));
+      }
+    } catch (error) {
+      console.log("error", error);
+    }
     return false;
   } 
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
+      {isLoading && <Loader />}
+      {!isLoading && <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
@@ -103,7 +122,7 @@ function SignIn({onSuccess, onError}) {
             Sign In
           </Button>
         </form>
-      </div>
+      </div>}
       <Box mt={8}>
         <Copyright />
       </Box>
