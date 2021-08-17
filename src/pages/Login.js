@@ -47,30 +47,42 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  error: {
+    color: 'red'
+  }
 }));
 
 function SignIn({onSuccess, onError}) {
   const classes = useStyles();
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
+  const [error, setError] = React.useState('');
   const firebaseInstance = getFirebase();
   const [isLoading, setIsLoading] = React.useState(false);
   function onSubmit(event) {
     event.preventDefault();
-    
-    try {
-      if (firebaseInstance) {
-        setIsLoading(true);
-        const user = firebaseInstance
-          .auth()
-          .signInWithEmailAndPassword(email, pass).then((user)=>{
-            console.log("user", user);
-            onSuccess();
-            setIsLoading(false);
-          }).catch(e => console.error('====>',e));
+    if(email !== '' && pass !== '') {
+      try {
+        if (firebaseInstance) {
+          setIsLoading(true);
+          setError('')
+          const user = firebaseInstance
+            .auth()
+            .signInWithEmailAndPassword(email, pass).then((user)=>{
+              console.log("user", user);
+              onSuccess();
+              setIsLoading(false);
+            }).catch(e => {
+              console.error('updated ===',e)
+              setError(e.message);
+              setIsLoading(false);
+            });
+        }
+      } catch (error) {
+        console.log("error", error);
       }
-    } catch (error) {
-      console.log("error", error);
+    } else {
+      setError('please add an email and password')
     }
     return false;
   } 
@@ -85,11 +97,12 @@ function SignIn({onSuccess, onError}) {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
+        {error && <span className={classes.error}>{error}</span>}
         <form className={classes.form} noValidate method="post" onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
-            required
+            required={true}
             fullWidth
             id="email"
             label="Email Address"
@@ -102,7 +115,7 @@ function SignIn({onSuccess, onError}) {
           <TextField
             variant="outlined"
             margin="normal"
-            required
+            required={true}
             fullWidth
             name="password"
             label="Password"
