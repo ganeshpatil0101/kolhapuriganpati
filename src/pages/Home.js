@@ -74,7 +74,7 @@ const Home = () => {
       <Box m="auto">
         <Card className={classes.root}>
         <CardHeader
-          title="Patakadil talim tarun mandal kolhapur 234 234 2342 34"
+          title="शिवाजी पेठ तरुण मंडळ"
           subheader="2020"
         />
         <img src="https://i.pinimg.com/736x/fc/60/da/fc60daeb063a28489cdbfb997b584ba3.jpg" 
