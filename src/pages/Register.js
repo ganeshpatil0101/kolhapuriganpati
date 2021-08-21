@@ -3,11 +3,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import AddOutlinedIcon from '@material-ui/icons/AddOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -15,20 +11,9 @@ import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import getFirebase from '../firebase-config';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-      कोल्हापुरी गणपती
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
+import firebaseCore from "firebase";
+import Error from '../components/Error';
+import Loader from '../components/Loader';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(2),
@@ -55,14 +40,52 @@ function Register({onSuccess, onError, currentUser}) {
   const [about, setAbout] = React.useState('');
   const [regNo, setRegNo] = React.useState('');
   const [mobNo, setMobNo] = React.useState('');
+  const [error, setError] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
   const history = useHistory();
   const navigateTo = () => history.push('/addganpati');
   const firebase = getFirebase();
+  const db = firebaseCore.firestore(firebase);
   function onSubmit(event) {
     event.preventDefault();
-    console.log('email ----> ', name, about, regNo);
-    onSuccess();
+    if (name && mobNo) {
+      setError('');
+      if (firebase) {
+        setIsLoading(true);
+        setError('');
+        try{
+            db.collection("mandal").add({
+                'name': name,
+                'regNo': regNo,
+                'mobNo': mobNo,
+                'about': about,
+          })
+          .then((data) => {
+              console.log('success ', data);
+              onSuccess();
+              resetFields();
+              setIsLoading(false);
+              alert('Saved!');
+          })
+          .catch((error) => {
+              console.error("Error writing document: ", error);
+              setError(error.message);
+              setIsLoading(false);
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    } else {
+      setError('Please enter name and mobile');
+    }
     return false;
+  }
+  const resetFields = () => {
+    setName('');
+    setRegNo('');
+    setMobNo('');
+    setAbout('');
   }
   const logOut = () => {
     if (firebase) {
@@ -75,7 +98,8 @@ function Register({onSuccess, onError, currentUser}) {
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
+      {isLoading && <Loader />}
+      {!isLoading && <div className={classes.paper}>
         {currentUser && currentUser.email && <Typography variant="caption" display="block" gutterBottom>
           {currentUser.email}
           <span onClick={logOut}> Logout </span>
@@ -86,29 +110,27 @@ function Register({onSuccess, onError, currentUser}) {
         <Typography component="h1" variant="h5">
             मंडळ रेजिस्ट्रेशन
         </Typography>
+        {error && <Error errorMessage={error} />}
         <form className={classes.form} noValidate method="post" onSubmit={onSubmit}>
           <TextField
             variant="outlined"
             margin="normal"
-            required
+            required={true}
             fullWidth
             id="name"
             label="मंडळाचे नाव"
             name="name"
             autoFocus
             value={name}
-            required={true}
             onChange={(event)=> setName(event.target.value)}
           />
           <TextField
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             id="regNo"
             label="मंडळ रजिस्टर नंबर"
             name="regNo"
-            autoFocus
             value={regNo}
             onChange={(event)=> setRegNo(event.target.value)}
           />
@@ -121,19 +143,16 @@ function Register({onSuccess, onError, currentUser}) {
             id="mobNo"
             label="मोबाईल नंबर"
             name="mobNo"
-            autoFocus
             value={mobNo}
             onChange={(event)=> setMobNo(event.target.value)}
           />
           <TextField
             variant="outlined"
             margin="normal"
-            required
             fullWidth
             id="about"
             label="मंडळाविषयी"
             name="about"
-            autoFocus
             value={about}
             multiline={true}
             maxRows='4'
@@ -155,7 +174,7 @@ function Register({onSuccess, onError, currentUser}) {
             onClick={navigateTo}
             > Add Ganpati Image Url </Link>
         </form>
-      </div>
+      </div>}
     </Container>
   );
 }

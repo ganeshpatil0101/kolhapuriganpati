@@ -2,19 +2,13 @@
 import React from "react";
 import { AppBar, Toolbar, IconButton, Typography } from "@material-ui/core";
 import { alpha, makeStyles } from "@material-ui/core/styles";
-import MenuIcon from "@material-ui/icons/Menu";
-import SearchIcon from '@material-ui/icons/Search';
-import { Link } from "react-router-dom";
-import InputBase from '@material-ui/core/InputBase';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PropTypes from 'prop-types';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-
+import { getYears, getCurrentYear } from './Handlers';
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -37,18 +31,21 @@ ElevationScroll.propTypes = {
 const Navbar = (props) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  // TODO get current year
-  const [year, setYear] = React.useState('2021');
-  const open = Boolean(anchorEl);
+  const [year, setYear] = React.useState(getCurrentYear());
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  const handleClose = (year) => {
-    setYear(year);
+  const handleClose = () => {
     setAnchorEl(null);
   };
-
+  const changeUrl = (year) => {
+    setYear(year);
+    props.onSeletedYear(year);
+    setAnchorEl(null);
+  }
+  const menuItems = getYears().map((year) =>
+    <MenuItem key={year} onClick={()=>{changeUrl(year)}}>{year}</MenuItem>
+  );
   return (
     <>
     <CssBaseline />
@@ -89,13 +86,14 @@ const Navbar = (props) => {
                   vertical: 'top',
                   horizontal: 'right',
                 }}
-                open={open}
+                open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
                 {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
-                <MenuItem onClick={()=>{handleClose(2018)}}>2018</MenuItem>
-                <MenuItem onClick={()=>{handleClose(2019)}}>2019</MenuItem>
-                <MenuItem onClick={()=>{handleClose(2020)}}>2020</MenuItem>
+                {menuItems}
+                {/* <MenuItem onClick={()=>{changeUrl(2018)}}>2018</MenuItem>
+                <MenuItem onClick={()=>{changeUrl(2019)}}>2019</MenuItem>
+                <MenuItem onClick={()=>{changeUrl(2020)}}>2020</MenuItem> */}
               </Menu>
             </div>
 

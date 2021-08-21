@@ -15,7 +15,9 @@ import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
-
+import getFirebase from '../firebase-config';
+import firebaseCore from "firebase";
+import { getYears } from '../components/Handlers';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(2),
@@ -49,10 +51,24 @@ function AddGanapati({onSuccess, onError}) {
   const classes = useStyles();
   const [url, setUrl] = React.useState('');
   const [mandal, setMandal] = React.useState('');
+  const [mandalList, setMandalList] = React.useState([]);
   const [year, setYear] = React.useState('');
   const [about, setAbout] = React.useState('');
   const history = useHistory();
   const navigateTo = () => history.push('/addmandal');
+  const firebase = getFirebase();
+  const db = firebaseCore.firestore(firebase);
+
+  React.useEffect(()=>{ 
+    let list = [];
+    db.collection("mandal").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        console.log(`${doc.id} => ${doc.data()}`, doc.data());
+        list.push({id:doc.id, name : doc.data().name});
+      });
+      setMandalList(list);
+    });
+  }, []);
   const onSubmit = (event) => {
     event.preventDefault();
     console.log('url ----> ', url);
@@ -65,6 +81,13 @@ function AddGanapati({onSuccess, onError}) {
   const handleYearChange = (event) => {
       setYear(event.target.value);
   }
+  const mList = mandalList.map((m)=>
+    <MenuItem key={m.id} value={m.id}>{m.name}</MenuItem>
+  )
+  //onClick={()=>{changeUrl(year)}}
+  const yearsList = getYears().map((year) =>
+    <MenuItem key={year} value={year}>{year}</MenuItem>
+  );
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -87,10 +110,7 @@ function AddGanapati({onSuccess, onError}) {
                         label="Select Mandal"
                         required={true}
                     >
-                        <MenuItem value=""><em>None</em></MenuItem>
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        {mList}
                     </Select>
                     <FormHelperText>Required</FormHelperText>
             </FormControl>
@@ -105,10 +125,7 @@ function AddGanapati({onSuccess, onError}) {
                         label="Select year"
                         required={true}
                     >
-                        <MenuItem value=""><em>None</em></MenuItem>
-                        <MenuItem value={2018}>2018</MenuItem>
-                        <MenuItem value={2019}>2019</MenuItem>
-                        <MenuItem value={2020}>2020</MenuItem>
+                        {yearsList}
                     </Select>
             </FormControl>
             <TextField
@@ -119,7 +136,6 @@ function AddGanapati({onSuccess, onError}) {
                 id="url"
                 label="Image URL"
                 name="url"
-                autoFocus
                 value={url}
                 onChange={(event)=> setUrl(event.target.value)}
             />
@@ -130,7 +146,6 @@ function AddGanapati({onSuccess, onError}) {
                 id="about"
                 label="about"
                 name="about"
-                autoFocus
                 value={about}
                 multiline={true}
                 maxRows='4'

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Grid, Typography } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
 import Login from './Login';
 import Register from './Register';
 import Loader from '../components/Loader';

@@ -8,7 +8,8 @@ var firebaseConfig = {
     storageBucket: "kolhapuriganpati.appspot.com",
     messagingSenderId: "441102419006",
     appId: "1:441102419006:web:8d3126aa46964db1c47d6f",
-    measurementId: "G-RCERM4M6Z8"
+    measurementId: "G-RCERM4M6Z8",
+    databaseURL: "https://kolhapuriganpati-default-rtdb.asia-southeast1.firebasedatabase.app/"
 };
 
 // Initialize Firebase
