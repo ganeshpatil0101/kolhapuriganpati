@@ -1,55 +1,37 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
+import getFirebase from '../firebase-config';
+import firebaseCore from "firebase";
+import Loader from '../components/Loader';
+import GanpatiCard from '../components/GanpatiCard';
 import Box from '@material-ui/core/Box';
-const useStyles = makeStyles((theme) => ({
-  root: {
-    maxWidth: 381,
-    marginBottom: '10px',  
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
-  },
-  avatar: {
-    backgroundColor: red[500],
-  },
-  cardContent: {
-    paddingTop: '10px',
-    paddingLeft: '10px',
-    paddingRight: '10px',
-    paddingBottom: '0'
-  },
-  cardAction: {
-    padding: '0'
-  },
-  cardHeader: {
-    padding: '10px'
-  }
-}));
+import NoData from '../components/NoData';
 const Home = ({currentYear}) => {
-  const classes = useStyles();
+  const firebase = getFirebase();
+  const db = firebaseCore.firestore(firebase);
+  const [mandalList, setMandalList] = React.useState({});
+  const [loading, setLoading] = React.useState(false);
   React.useEffect(()=>{ 
     console.log("currentYear changed ", currentYear);
+    let list = {};
+    setLoading(true);
+    db.collection("mandal").where(`${currentYear}`, '!=', '') .get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        list[doc.id] = doc.data();
+      });
+      setMandalList(list);
+      setLoading(false);
+    });
   }, [currentYear]);
+  const ganpatiList = React.useMemo(()=> Object.keys(mandalList).map((key)=>
+    <GanpatiCard key={key} id={key} mandalData={mandalList[key]} currentYear={currentYear} />
+  )); 
   return (
   <>
-    <Box display="flex" flexDirection="column">
-      <Box m="auto">
+    {loading && <Loader />}
+    {!loading && <Box display="flex" flexDirection="column">
+      {ganpatiList}
+      {ganpatiList.length === 0 && <NoData year={currentYear} />}
+      {/* <Box m="auto">
         <Card className={classes.root}>
           <CardHeader className={classes.cardHeader}
             title="पाटाकडील तालीम तरुण मंडळ"
@@ -77,14 +59,9 @@ const Home = ({currentYear}) => {
             This impressive paella is a perfect party dish and a fun meal to cook
           </Typography>
         </CardContent>
-        {/* <CardActions disableSpacing className={classes.cardAction}>
-          <IconButton aria-label="add to favorites">
-            <FavoriteIcon />
-          </IconButton>
-        </CardActions> */}
         </Card>
-      </Box>
-    </Box>
+      </Box> */}
+    </Box>}
   </>
   );
 };

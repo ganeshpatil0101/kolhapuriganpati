@@ -18,6 +18,7 @@ import Link from '@material-ui/core/Link';
 import getFirebase from '../firebase-config';
 import firebaseCore from "firebase";
 import { getYears } from '../components/Handlers';
+import Loader from '../components/Loader';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(2),
@@ -54,44 +55,65 @@ function AddGanapati({onSuccess, onError}) {
   const [mandalList, setMandalList] = React.useState([]);
   const [year, setYear] = React.useState('');
   const [about, setAbout] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
   const history = useHistory();
   const navigateTo = () => history.push('/addmandal');
   const firebase = getFirebase();
   const db = firebaseCore.firestore(firebase);
-
   React.useEffect(()=>{ 
-    let list = [];
+    let list = {};
+    setLoading(true);
     db.collection("mandal").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
-        console.log(`${doc.id} => ${doc.data()}`, doc.data());
-        list.push({id:doc.id, name : doc.data().name});
+        list[doc.id] = doc.data();
+        console.log(list);
       });
       setMandalList(list);
+      setLoading(false);
     });
-  });
+  }, []);
   const onSubmit = (event) => {
     event.preventDefault();
-    console.log('url ----> ', url);
-    // onSuccess();
+    setLoading(true);
+    let mandalRef = db.collection('mandal').doc(mandal);
+      const d = {};
+      d[year] = {
+        url: url,
+        about: about,
+      };
+      mandalRef.set(d, { merge: true }).then(()=>{
+        alert('Saved !');
+        resetFields();
+        setLoading(false);
+      }).catch((r)=> {
+        console.error(r);
+        setLoading(false);
+      });
     return false;
   } 
+  const resetFields = () => {
+    setYear('');
+    setMandal('');
+    setUrl('');
+    setAbout('');
+  }
   const handleChange = (event) => {
     setMandal(event.target.value);
   };
   const handleYearChange = (event) => {
       setYear(event.target.value);
   }
-  const mList = mandalList.map((m)=>
-    <MenuItem key={m.id} value={m.id}>{m.name}</MenuItem>
+  const mList = Object.keys(mandalList).map((key)=>
+    <MenuItem key={key} value={key}>{mandalList[key].name}</MenuItem>
   )
-  //onClick={()=>{changeUrl(year)}}
   const yearsList = getYears().map((year) =>
     <MenuItem key={year} value={year}>{year}</MenuItem>
   );
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
-      <div className={classes.paper}>
+      {loading && <Loader />}
+      {!loading && <div className={classes.paper}>
         <Avatar className={classes.avatar}>
             <AddOutlinedIcon />
         </Avatar>
@@ -169,7 +191,7 @@ function AddGanapati({onSuccess, onError}) {
             Add Mandal
             </Link>
         </form>
-      </div>
+      </div>}
     </Container>
   );
 }
