@@ -52,14 +52,6 @@ const Navbar = (props) => {
     <ElevationScroll {...props}>
       <AppBar position="fixed">
         <Toolbar>
-          {/* <IconButton
-            className={classes.menuButton}
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton> */}
           <Typography variant="h6" className={classes.title}>
             कोल्हापुरी गणपती - {year}
           </Typography>
@@ -89,32 +81,9 @@ const Navbar = (props) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                {/* <MenuItem onClick={handleClose}>Profile</MenuItem> */}
                 {menuItems}
-                {/* <MenuItem onClick={()=>{changeUrl(2018)}}>2018</MenuItem>
-                <MenuItem onClick={()=>{changeUrl(2019)}}>2019</MenuItem>
-                <MenuItem onClick={()=>{changeUrl(2020)}}>2020</MenuItem> */}
               </Menu>
             </div>
-
-          {/* <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </div> */}
-
-          {/* <Link className={classes.link} to="/about">
-            About
-          </Link> */}
-          
         </Toolbar>
       </AppBar>
       </ElevationScroll>
@@ -181,4 +150,4 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default Navbar;
+export default React.memo(Navbar);

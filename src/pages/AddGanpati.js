@@ -68,7 +68,7 @@ function AddGanapati({onSuccess, onError}) {
       });
       setMandalList(list);
     });
-  }, []);
+  });
   const onSubmit = (event) => {
     event.preventDefault();
     console.log('url ----> ', url);
