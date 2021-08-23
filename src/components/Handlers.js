@@ -11,3 +11,6 @@ export function getCurrentYear() {
     return new Date().getFullYear();
 }
 
+export function getTimeInMs() {
+    return new Date().getTime();
+}
