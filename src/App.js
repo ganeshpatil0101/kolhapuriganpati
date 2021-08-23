@@ -1,9 +1,9 @@
 import React, { Suspense, lazy } from "react";
 import "./App.css";
-import Navbar from "./components/Navbar";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { makeStyles } from '@material-ui/core/styles';
 import { getCurrentYear } from './components/Handlers';
+const Navbar = lazy(()=> import("./components/Navbar"));
 const About = lazy(() => import("./pages/About"));
 const Home = lazy(() => import("./pages/Home"));
 const AddMandal = lazy(() => import("./pages/AddMandal"));

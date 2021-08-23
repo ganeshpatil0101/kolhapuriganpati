@@ -7,8 +7,8 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 const useStyles = makeStyles((theme) => ({
     root: {
-      maxWidth: 415,
-      minWidth: 415,
+    //   maxWidth: 415,
+    //   minWidth: 415,
       marginBottom: '10px',  
     },
     cardContent: {
@@ -25,7 +25,8 @@ const GanpatiCard = ({id, mandalData, currentYear}) => {
     const classes = useStyles();
   return (
       <>
-        {mandalData[currentYear] && mandalData[currentYear].url &&  <Box m="auto">
+        {mandalData[currentYear] && mandalData[currentYear].url &&  
+        <Box m="auto" width={1}>
             <Card className={classes.root}>
             <CardHeader className={classes.cardHeader}
                 title={mandalData.name}

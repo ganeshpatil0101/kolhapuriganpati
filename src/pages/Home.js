@@ -14,7 +14,7 @@ const Home = ({currentYear}) => {
     console.log("currentYear changed ", currentYear);
     let list = {};
     setLoading(true);
-    db.collection("mandal").where(`${currentYear}`, '!=', '') .get().then((querySnapshot) => {
+    db.collection("mandal").where(`${currentYear}`, '!=', '').get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         list[doc.id] = doc.data();
       });
