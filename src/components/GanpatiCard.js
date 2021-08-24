@@ -5,6 +5,12 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Dialog from '@material-ui/core/Dialog';
+import IconButton from '@material-ui/core/IconButton';
 const useStyles = makeStyles((theme) => ({
     root: {
     //   maxWidth: 415,
@@ -19,10 +25,52 @@ const useStyles = makeStyles((theme) => ({
     },
     cardHeader: {
       padding: '10px'
-    }
+    },
+    appBar: {
+        position: 'relative',
+      },
   }));
+  const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+  
 const GanpatiCard = ({id, mandalData, currentYear}) => {
     const classes = useStyles();
+    console.log('called GanpatiCard ', currentYear);
+    const [open, setOpen] = React.useState(false);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    function launchIntoFullscreen(event) {
+        let element = event.target;
+        if(element.requestFullscreen) {
+            element.requestFullscreen();
+        } else if(element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+        } else if(element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+        } else if(element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+        }
+    }
+    React.useEffect(()=>{
+        document.addEventListener('fullscreenchange', (event) => {
+            if (document.fullscreenElement) {
+                console.log(`Element: ${document.fullscreenElement.id} entered full-screen mode.`);
+            } else {
+                console.log('Leaving full-screen mode.');
+            }
+          });
+          return () => {
+            console.log('component destoryed remove event');
+          }
+    }, []);
   return (
       <>
         {mandalData[currentYear] && mandalData[currentYear].url &&  
@@ -32,16 +80,34 @@ const GanpatiCard = ({id, mandalData, currentYear}) => {
                 title={mandalData.name}
                 subheader={currentYear}
             />
-            {/* <img src="https://lh3.googleusercontent.com/zHspBskvagZibZQLW_OLLkntHnkp7_oXWXzcjdu0OG0dcwKd_6ujmtxtWz_Stn6xB67NCUagm9u4dl3J9-wMZhhNc9E7LcuNiOliOAjAUEJrj83Ts0gHb5Ryz5u4uS7IUiBkalUchKaf10gC4yi-v76JQJK0nzz6-4HMYqNP02nRVXpqOfktQxjK8qzgGyaqaDOenffSYGLV4nuG7p6YBB8oBBAXDcDWSuxfZ-rfpq8aTQGv8XodQ8DcfIDDgo5HAPzWPlnHlcn3oIhqKhDEXID80XduMkD7LNDItLohDqEGSW9sh1rHayJ2-TbHPGF8orQ1P5sIGDfE-WHWfm6cU7uN6Q4JA6pGGD8z-SiowCAHMCVcb1PFNOExIG5sTxO11un2m1YiQqKUbUDebmMBWlkYdzWxEE98VQa-T0r7BBBWg3wVPcnEjllWQuG3COgKF3s2KOMcNjsLfuLd5rxdCD2bkZEL2Lcwy72pBzMgrB1xPfvH2UI57EPKBz7U8SkdSTEmyOEw4mD9UAbNn790pdnZp1jgUTWn13Iyz9dkz6l_AY6qjgdYzI6Ggmh6aLi9NQsO4sGixdJRlTYNUrNA6H39Sn8gHPjrxeFkbQxXg2ZxSO8qAHRbEfHCFWAuT_Y_ta7qJCTzJmS_lhZoPfA_aOe5Ka1n0BtQgviaO3vmDmiph4dOZirsGSw617kHgx_LRXA_6b0lJuHJD5ryT0vRUTw4aorJwdMWkDyw14dgwUngjOEiZ9DViqzwX1OTMMZvkMvzSdoABO-FAQxtYw=w365-h487-no?authuser=0" 
-            title="tetset" alt="test" width="100%" height="100%"/> */}
+            
+            {/* <span>
+                <CloseIcon/>;
+            </span> */}
             <img src={mandalData[currentYear].url} 
-            title={mandalData.name} alt={mandalData[currentYear].about} width="100%" height="100%"/>
+            title={mandalData.name} alt={mandalData[currentYear].about} width="100%" height="100%"
+            onClick={handleClickOpen}/>
+            {/* onClick={launchIntoFullscreen} */}
             <CardContent className={classes.cardContent} >
                 <Typography variant="body2" color="textSecondary" component="p">
                     {mandalData[currentYear].about}
                 </Typography>
             </CardContent>
             </Card>
+            <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+                {/* <AppBar className={classes.appBar}>
+                <Toolbar>
+                    
+                </Toolbar> */}
+                <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+                    <CloseIcon />
+                </IconButton>
+                {/* </AppBar> */}
+                <img src={mandalData[currentYear].url} 
+                    title={mandalData.name} alt={mandalData[currentYear].about} width="100%" height="100%"
+                    />
+            </Dialog>
+
         </Box>
         }
     </>

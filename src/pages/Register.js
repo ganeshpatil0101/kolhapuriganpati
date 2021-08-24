@@ -14,6 +14,7 @@ import getFirebase from '../firebase-config';
 import firebaseCore from "firebase";
 import Error from '../components/Error';
 import Loader from '../components/Loader';
+import { getTimeInMs } from '../components/Handlers';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(2),
@@ -59,6 +60,7 @@ function Register({onSuccess, onError, currentUser}) {
                 'regNo': regNo,
                 'mobNo': mobNo,
                 'about': about,
+                'createdOn' : getTimeInMs()
           })
           .then((data) => {
               console.log('success ', data);
