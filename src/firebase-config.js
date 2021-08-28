@@ -1,4 +1,4 @@
-import firebase from "firebase";
+import { initializeApp } from 'firebase/app';
 
 // If you're not using Code Sandbox, never hard-code the keys! Add them in your .env file and link them here
 var firebaseConfig = {
@@ -18,7 +18,7 @@ let instance;
 export default function getFirebase() {
   if (typeof window !== "undefined") {
     if (instance) return instance;
-    instance = firebase.initializeApp(firebaseConfig);
+    instance = initializeApp(firebaseConfig);
     return instance;
   }
   return null;

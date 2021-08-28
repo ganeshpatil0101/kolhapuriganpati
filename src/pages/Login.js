@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
-import getFirebase from '../firebase-config';
+import { getAuth, signInWithEmailAndPassword  } from "firebase/auth";
 import Loader from '../components/Loader';
 
 function Copyright() {
@@ -54,18 +54,15 @@ function SignIn({onSuccess, onError}) {
   const [email, setEmail] = React.useState('');
   const [pass, setPass] = React.useState('');
   const [error, setError] = React.useState('');
-  const firebaseInstance = getFirebase();
+  const auth = getAuth();
   const [isLoading, setIsLoading] = React.useState(false);
   function onSubmit(event) {
     event.preventDefault();
     if(email !== '' && pass !== '') {
       try {
-        if (firebaseInstance) {
           setIsLoading(true);
           setError('');
-          firebaseInstance
-            .auth()
-            .signInWithEmailAndPassword(email, pass).then((user)=>{
+          signInWithEmailAndPassword(auth, email, pass).then((user)=>{
               console.log("user", user);
               onSuccess();
               setIsLoading(false);
@@ -74,7 +71,6 @@ function SignIn({onSuccess, onError}) {
               setError(e.message);
               setIsLoading(false);
             });
-        }
       } catch (error) {
         console.log("error", error);
       }

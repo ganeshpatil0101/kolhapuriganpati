@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import getFirebase from '../firebase-config';
-import firebaseCore from "firebase";
+import { getFirestore, collection, getDocs, updateDoc, doc } from 'firebase/firestore/lite';
 import { getYears } from '../components/Handlers';
 import Loader from '../components/Loader';
 const useStyles = makeStyles((theme) => ({
@@ -58,12 +58,13 @@ function AddGanapati({onSuccess, onError}) {
   const [loading, setLoading] = React.useState(false);
   const history = useHistory();
   const navigateTo = () => history.push('/addmandal');
-  const firebase = getFirebase();
-  const db = firebaseCore.firestore(firebase);
+  const app = getFirebase();
+  const db = getFirestore(app);
+  const mandalCollection = collection(db, "mandal");
   React.useEffect(()=>{ 
     let list = {};
     setLoading(true);
-    db.collection("mandal").get().then((querySnapshot) => {
+    getDocs(mandalCollection).then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         list[doc.id] = doc.data();
         console.log(list);
@@ -75,13 +76,12 @@ function AddGanapati({onSuccess, onError}) {
   const onSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
-    let mandalRef = db.collection('mandal').doc(mandal);
       const d = {};
       d[year] = {
         url: url,
         about: about,
       };
-      mandalRef.set(d, { merge: true }).then(()=>{
+      updateDoc(doc(db, 'mandal', mandal), d).then(()=>{
         alert('Saved !');
         resetFields();
         setLoading(false);

@@ -11,7 +11,8 @@ import Container from '@material-ui/core/Container';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import getFirebase from '../firebase-config';
-import firebaseCore from "firebase";
+import { getAuth, signOut } from "firebase/auth";
+import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
 import Error from '../components/Error';
 import Loader from '../components/Loader';
 import { getTimeInMs } from '../components/Handlers';
@@ -45,17 +46,17 @@ function Register({onSuccess, onError, currentUser}) {
   const [isLoading, setIsLoading] = React.useState(false);
   const history = useHistory();
   const navigateTo = () => history.push('/addganpati');
-  const firebase = getFirebase();
-  const db = firebaseCore.firestore(firebase);
+  const app = getFirebase();
+  const db = getFirestore(app);
+  const mandalCollection = collection(db, "mandal");
   function onSubmit(event) {
     event.preventDefault();
     if (name && mobNo) {
       setError('');
-      if (firebase) {
         setIsLoading(true);
         setError('');
         try{
-            db.collection("mandal").add({
+          addDoc(mandalCollection, {
                 'name': name,
                 'regNo': regNo,
                 'mobNo': mobNo,
@@ -77,7 +78,6 @@ function Register({onSuccess, onError, currentUser}) {
         } catch (e) {
           console.error(e);
         }
-      }
     } else {
       setError('Please enter name and mobile');
     }
@@ -90,12 +90,12 @@ function Register({onSuccess, onError, currentUser}) {
     setAbout('');
   }
   const logOut = () => {
-    if (firebase) {
-      // setIsLoading(true);
-      firebase.auth().signOut().then(()=>{ 
-        console.log(' logOut ');
-      });
-    }
+    const auth = getAuth();
+    signOut(auth).then(() => {
+      console.log('logout success ');
+    }).catch((error) => {
+      console.error('error while logout ', error);
+    });
   };
   return (
     <Container component="main" maxWidth="xs">

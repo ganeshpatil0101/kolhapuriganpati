@@ -3,18 +3,18 @@ import { Grid } from "@material-ui/core";
 import Login from './Login';
 import Register from './Register';
 import Loader from '../components/Loader';
-import getFirebase from "../firebase-config";
+import getFirebase from '../firebase-config';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const AddMandal = () => {
   const [isLogin, setIsLogin] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState(null);
-
+  const app = getFirebase();
   useEffect(() => {
-    const firebase = getFirebase();
-    if (firebase) {
+    const auth = getAuth();
       setIsLoading(true);
-      firebase.auth().onAuthStateChanged((authUser) => {
+      onAuthStateChanged(auth, (authUser) => {
         setIsLoading(false);
         if (authUser) {
           setCurrentUser(authUser);
@@ -24,7 +24,6 @@ const AddMandal = () => {
           setCurrentUser(null);
         }
       });
-    }
   }, []);
 
   function onLoginSuccess() {
