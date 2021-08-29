@@ -29,18 +29,18 @@ const GanpatiCard = ({id, mandalData, currentYear}) => {
     const classes = useStyles();
   return (
       <>
-        {mandalData[currentYear] && mandalData[currentYear].url &&  
+        {mandalData && mandalData.url &&  
         <Box m="auto" width={1}>
             <Card className={classes.root}>
             <CardHeader className={classes.cardHeader}
                 title={mandalData.name}
                 subheader={currentYear}
             />
-            <img src={mandalData[currentYear].url} 
-            title={mandalData.name} alt={mandalData[currentYear].about} width="100%" height="100%" />
+            <img src={mandalData.url} 
+            title={mandalData.name} alt={mandalData.about} width="100%" height="100%" />
             <CardContent className={classes.cardContent} >
                 <Typography variant="body2" color="textSecondary" component="p">
-                    {mandalData[currentYear].about}
+                    {mandalData.about}
                 </Typography>
             </CardContent>
             </Card>

@@ -16,7 +16,7 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import Link from '@material-ui/core/Link';
 import getFirebase from '../firebase-config';
-import { getFirestore, collection, getDocs, updateDoc, doc } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, doc, setDoc } from 'firebase/firestore/lite';
 import { getYears } from '../components/Handlers';
 import Loader from '../components/Loader';
 const useStyles = makeStyles((theme) => ({
@@ -67,7 +67,6 @@ function AddGanapati({onSuccess, onError}) {
     getDocs(mandalCollection).then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         list[doc.id] = doc.data();
-        console.log(list);
       });
       setMandalList(list);
       setLoading(false);
@@ -76,19 +75,27 @@ function AddGanapati({onSuccess, onError}) {
   const onSubmit = (event) => {
     event.preventDefault();
     setLoading(true);
-      const d = {};
-      d[year] = {
+    const mandalName = mandalList[mandal].name;
+      const mName = mandalName.replaceAll(' ', '');
+      const data = {};
+      data[mName] = {
         url: url,
         about: about,
+        name: mandalName,
+        mandalId: mandal
       };
-      updateDoc(doc(db, 'mandal', mandal), d).then(()=>{
-        alert('Saved !');
-        resetFields();
-        setLoading(false);
-      }).catch((r)=> {
-        console.error(r);
-        setLoading(false);
-      });
+      try{
+        setDoc(doc(collection(db, "ganpati"), `${year}`), data, { merge: true }).then(()=>{
+          alert('Saved !');
+          resetFields();
+          setLoading(false);
+        }).catch((r)=> {
+          console.error(r);
+          setLoading(false);
+        });
+      } catch(e) {
+        console.error('=====>', e);
+      }
     return false;
   } 
   const resetFields = () => {
@@ -122,6 +129,20 @@ function AddGanapati({onSuccess, onError}) {
         </Typography>
         <form className={classes.form} noValidate method="post" onSubmit={onSubmit}>
             <FormControl variant="outlined" className={classes.formControl}>
+                <InputLabel id="select-year">Select Year</InputLabel>
+                    <Select
+                    autoWidth={false}
+                        labelId="select-year-label"
+                        id="select-year-label"
+                        value={year}
+                        onChange={handleYearChange}
+                        label="Select year"
+                        required={true}
+                    >
+                        {yearsList}
+                    </Select>
+            </FormControl>
+            <FormControl variant="outlined" className={classes.formControl}>
                 <InputLabel id="select-mandal">Select Mandal</InputLabel>
                     <Select
                     autoWidth={false}
@@ -135,20 +156,6 @@ function AddGanapati({onSuccess, onError}) {
                         {mList}
                     </Select>
                     <FormHelperText>Required</FormHelperText>
-            </FormControl>
-            <FormControl variant="outlined" className={classes.formControl}>
-                <InputLabel id="select-year">Select Year</InputLabel>
-                    <Select
-                    autoWidth={false}
-                        labelId="select-year-label"
-                        id="select-year-label"
-                        value={year}
-                        onChange={handleYearChange}
-                        label="Select year"
-                        required={true}
-                    >
-                        {yearsList}
-                    </Select>
             </FormControl>
             <TextField
                 variant="outlined"

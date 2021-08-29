@@ -14,3 +14,11 @@ export function getCurrentYear() {
 export function getTimeInMs() {
     return new Date().getTime();
 }
+export function getFromTo(arrEl, from, to) {
+    const data = [];
+    let toLen = (arrEl.length < to) ? arrEl.length : to;
+    for(let i = from; i <= toLen; i++) {
+        data.push(arrEl[i]);
+    }
+    return data;
+}

@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import getFirebase from '../firebase-config';
 import { getAuth, signOut } from "firebase/auth";
-import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore/lite';
+import { getFirestore, collection, addDoc } from 'firebase/firestore/lite';
 import Error from '../components/Error';
 import Loader from '../components/Loader';
 import { getTimeInMs } from '../components/Handlers';

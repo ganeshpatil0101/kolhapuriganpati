@@ -1,36 +1,67 @@
 import React from 'react';
 import getFirebase from '../firebase-config';
-// import firebaseCore from "firebase";
-import { getFirestore, collection, query, where, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDoc, doc } from 'firebase/firestore/lite';
 import Loader from '../components/Loader';
 import GanpatiCard from '../components/GanpatiCard';
 import Box from '@material-ui/core/Box';
 import NoData from '../components/NoData';
+import { getFromTo } from '../components/Handlers';
+import Button from '@material-ui/core/Button';
+const LIMIT = 2;
 const Home = ({currentYear}) => {
   const app = getFirebase();
-  // const db = firebaseCore.firestore(firebase);
   const db = getFirestore(app);
-  const mandalCollection = collection(db, "mandal");
-  const [mandalList, setMandalList] = React.useState({});
+  const [mandalList, setMandalList] = React.useState([]);
+  const [allList, setAllList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  
-
+  const [startCount, setStartCount] = React.useState(0);
+  const [showMore, setShowMore] = React.useState(false);
   React.useEffect(()=>{ 
     console.log("currentYear changed ", currentYear);
-    let list = {};
+    let list = [];
     setLoading(true);
-    const q = query(mandalCollection, where(`${currentYear}`, '!=', ''));
-    getDocs(q).then((querySnapshot) => {
-      console.log('querySnapshot', querySnapshot.docs);
-      querySnapshot.forEach((doc) => {
-        list[doc.id] = doc.data();
-      });
-      setMandalList(list);
+    setStartCount(0);
+    getDoc(doc(collection(db, "ganpati"), `${currentYear}`)).then((querySnapshot) => {
+      if (querySnapshot.exists()) {
+        const data = querySnapshot.data();
+        console.log("Document data:", data);
+        for (const doc in data) {
+          // list[doc] = data[doc];
+          list.push(data[doc]);
+        }
+        setMandalList(getFromTo(list, 0, LIMIT));
+        setStartCount(LIMIT+1);
+        setAllList(list);
+      } else {
+        console.log("No such document!");
+        setMandalList([]);
+        setAllList([]);
+      }
       setLoading(false);
     });
   }, [currentYear]);
-  const ganpatiList = React.useMemo(()=> Object.keys(mandalList).map((key)=>
-    <GanpatiCard key={key} id={key} mandalData={mandalList[key]} currentYear={currentYear} />
+  React.useEffect(()=> {
+    console.log(' startCOunt ', startCount, allList.length);
+    if (startCount < allList.length) {
+      setShowMore(true);
+    } else {
+      setShowMore(false);
+    }
+  }, [startCount, allList]);
+  const getNextData = React.useCallback(() => {
+    if (mandalList.length < allList.length) {
+      const d = getFromTo(allList, startCount, startCount+LIMIT);
+      setMandalList([
+        ...mandalList,
+        ...d
+      ]
+      );
+      setStartCount(startCount+LIMIT+1);
+    }
+  });
+
+  const ganpatiList = React.useMemo(()=> mandalList.map((element, key)=>
+    <GanpatiCard key={key} id={key} mandalData={element} currentYear={currentYear} />
   )); 
   return (
   <>
@@ -38,6 +69,7 @@ const Home = ({currentYear}) => {
     {!loading && <Box display="flex" flexDirection="column">
       {ganpatiList}
       {ganpatiList.length === 0 && <NoData year={currentYear} />}
+      {showMore && <Button onClick={getNextData} color="primary">अजून पहा !</Button>}
     </Box>}
   </>
   );
