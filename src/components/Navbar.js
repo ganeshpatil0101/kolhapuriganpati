@@ -53,7 +53,7 @@ const Navbar = (props) => {
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            कोल्हापुरी गणपती - {year}
+            कोल्हापुरी गणेश मूर्ती - {year}
           </Typography>
           <div>
               <IconButton

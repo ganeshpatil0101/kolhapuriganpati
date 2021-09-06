@@ -7,6 +7,7 @@ import Box from '@material-ui/core/Box';
 import NoData from '../components/NoData';
 import { getFromTo } from '../components/Handlers';
 import Button from '@material-ui/core/Button';
+const NotificationDialog = React.lazy(()=>import('../components/Notification'));
 const LIMIT = 2;
 const Home = ({currentYear}) => {
   const app = getFirebase();
@@ -62,7 +63,7 @@ const Home = ({currentYear}) => {
 
   const ganpatiList = React.useMemo(()=> mandalList.map((element, key)=>
     <GanpatiCard key={key} id={key} mandalData={element} currentYear={currentYear} />
-  )); 
+  ), [mandalList]); 
   return (
   <>
     {loading && <Loader />}
@@ -70,6 +71,7 @@ const Home = ({currentYear}) => {
       {ganpatiList}
       {ganpatiList.length === 0 && <NoData year={currentYear} />}
       {showMore && <Button onClick={getNextData} color="primary">अजून पहा !</Button>}
+      <NotificationDialog />
     </Box>}
   </>
   );
