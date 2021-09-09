@@ -43,6 +43,7 @@ function Register({onSuccess, onError, currentUser}) {
   const [regNo, setRegNo] = React.useState('');
   const [mobNo, setMobNo] = React.useState('');
   const [error, setError] = React.useState('');
+  const [area, setArea] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const history = useHistory();
   const navigateTo = () => history.push('/addganpati');
@@ -60,8 +61,9 @@ function Register({onSuccess, onError, currentUser}) {
                 'name': name,
                 'regNo': regNo,
                 'mobNo': mobNo,
+                'area': area,
                 'about': about,
-                'createdOn' : getTimeInMs()
+                'createdOn' : getTimeInMs(),
           })
           .then((data) => {
               console.log('success ', data);
@@ -88,6 +90,7 @@ function Register({onSuccess, onError, currentUser}) {
     setRegNo('');
     setMobNo('');
     setAbout('');
+    setArea('');
   }
   const logOut = () => {
     const auth = getAuth();
@@ -147,6 +150,18 @@ function Register({onSuccess, onError, currentUser}) {
             name="mobNo"
             value={mobNo}
             onChange={(event)=> setMobNo(event.target.value)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required={true}
+            fullWidth
+            id="area"
+            label="ठिकाण"
+            name="area"
+            autoFocus
+            value={area}
+            onChange={(event)=> setArea(event.target.value)}
           />
           <TextField
             variant="outlined"

@@ -76,13 +76,15 @@ function AddGanapati({onSuccess, onError}) {
     event.preventDefault();
     setLoading(true);
     const mandalName = mandalList[mandal].name;
+    const area = mandalList[mandal].area;
       const mName = mandalName.replaceAll(' ', '');
       const data = {};
       data[mName] = {
         url: url,
         about: about,
         name: mandalName,
-        mandalId: mandal
+        mandalId: mandal,
+        area: area
       };
       try{
         setDoc(doc(collection(db, "ganpati"), `${year}`), data, { merge: true }).then(()=>{
