@@ -8,7 +8,7 @@ import NoData from '../components/NoData';
 import { getFromTo } from '../components/Handlers';
 import Button from '@material-ui/core/Button';
 const NotificationDialog = React.lazy(()=>import('../components/Notification'));
-const LIMIT = 2;
+const LIMIT = 9;
 const Home = ({currentYear}) => {
   const app = getFirebase();
   const db = getFirestore(app);

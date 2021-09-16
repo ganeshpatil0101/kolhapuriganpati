@@ -1,2 +1,2 @@
 # Kolhapur Ganapati By Years
-[LIVE DEMO](https://kolhapurganeshdarshan.netlify.app/)
+[LIVE DEMO](http://kopganeshmurti.in/)

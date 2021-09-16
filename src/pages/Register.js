@@ -159,7 +159,6 @@ function Register({onSuccess, onError, currentUser}) {
             id="area"
             label="ठिकाण"
             name="area"
-            autoFocus
             value={area}
             onChange={(event)=> setArea(event.target.value)}
           />
