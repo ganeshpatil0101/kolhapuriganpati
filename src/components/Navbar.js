@@ -1,8 +1,7 @@
   
 import React from "react";
-import { AppBar, Toolbar, IconButton, Typography } from "@material-ui/core";
+import { AppBar, Toolbar, Typography, Button } from "@material-ui/core";
 import { alpha, makeStyles } from "@material-ui/core/styles";
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import PropTypes from 'prop-types';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import useScrollTrigger from '@material-ui/core/useScrollTrigger';
@@ -60,16 +59,7 @@ const Navbar = (props) => {
             कोल्हापुरी गणेश मूर्ती - {year}
           </Typography>
           <div>
-              <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit"
-                className={classes.btnFix}
-              >
-                <MoreVertIcon />
-              </IconButton>
+              <Button variant="contained" onClick={handleMenu}> Year </Button>
               <Menu
                 id="menu-appbar"
                 anchorEl={anchorEl}

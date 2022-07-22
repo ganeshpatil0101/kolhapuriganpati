@@ -14,7 +14,6 @@ const Home = ({currentYear}) => {
   const app = getFirebase();
   const db = getFirestore(app);
   const {year} = useParams();
-  console.log("====>>> year ", year)
   const [mandalList, setMandalList] = React.useState([]);
   const [allList, setAllList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -28,7 +27,6 @@ const Home = ({currentYear}) => {
     getDoc(doc(collection(db, "ganpati"), `${year}`)).then((querySnapshot) => {
       if (querySnapshot.exists()) {
         const data = querySnapshot.data();
-        console.log("Document data:", data);
         for (const doc in data) {
           // list[doc] = data[doc];
           list.push(data[doc]);
@@ -45,7 +43,6 @@ const Home = ({currentYear}) => {
     });
   }, [year]);
   React.useEffect(()=> {
-    console.log(' startCOunt ', startCount, allList.length);
     if (startCount < allList.length) {
       setShowMore(true);
     } else {
