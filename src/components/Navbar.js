@@ -9,6 +9,7 @@ import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { getYears, getCurrentYear } from './Handlers';
+import { Link } from "react-router-dom";
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -38,14 +39,17 @@ const Navbar = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const changeUrl = (year) => {
+  const changeUrl = (event, year) => {
     setYear(year);
     props.onSeletedYear(year);
     setAnchorEl(null);
+    event.preventDefault();
   }
-  const menuItems = getYears().map((year) =>
-    <MenuItem key={year} onClick={()=>{changeUrl(year)}}>{year}</MenuItem>
-  );
+  const menuItems = getYears().map((year) => (
+      <MenuItem key={year} onClick={(event)=>changeUrl(event, year)}>
+        <Link to={`/photo/${year}`} >{year}</Link>
+      </MenuItem>
+  ));
   return (
     <>
     <CssBaseline />

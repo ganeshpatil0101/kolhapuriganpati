@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import "./App.css";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { makeStyles } from '@material-ui/core/styles';
 import { getCurrentYear } from './components/Handlers';
 const Navbar = lazy(()=> import("./components/Navbar"));
@@ -26,10 +26,14 @@ function App() {
           {/* <header className="App-header"> */}
             <Switch>
             <Route exact path="/">
-              <Home currentYear={year} />
+              {/* <Home currentYear={year} /> */}
+              <Redirect to={{
+                pathname:`/photo/${year}`,
+                state:{ year:year },
+              }} />
             </Route>
-            <Route exact path="/home">
-              <Home />
+            <Route exact path="/photo/:year">
+              <Home/>
             </Route>
             <Route path="/about" >
               <About/>

@@ -37,7 +37,7 @@ const GanpatiCard = ({id, mandalData, currentYear}) => {
                 subheader={mandalData.area}
             />
             <img src={mandalData.url} 
-            title={mandalData.name} alt={mandalData.about} width="100%" height="100%" />
+            title={mandalData.name} loading="lazy" alt={mandalData.about} width="100%" height="100%" />
             <CardContent className={classes.cardContent} >
                 <Typography variant="body2" color="textSecondary" component="span">
                     {mandalData.about}

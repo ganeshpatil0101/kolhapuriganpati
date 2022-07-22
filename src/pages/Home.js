@@ -7,22 +7,25 @@ import Box from '@material-ui/core/Box';
 import NoData from '../components/NoData';
 import { getFromTo } from '../components/Handlers';
 import Button from '@material-ui/core/Button';
+import { useParams } from 'react-router-dom';
 const NotificationDialog = React.lazy(()=>import('../components/Notification'));
 const LIMIT = 9;
 const Home = ({currentYear}) => {
   const app = getFirebase();
   const db = getFirestore(app);
+  const {year} = useParams();
+  console.log("====>>> year ", year)
   const [mandalList, setMandalList] = React.useState([]);
   const [allList, setAllList] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [startCount, setStartCount] = React.useState(0);
   const [showMore, setShowMore] = React.useState(false);
   React.useEffect(()=>{ 
-    console.log("currentYear changed ", currentYear);
+    console.log("currentYear changed ", year);
     let list = [];
     setLoading(true);
     setStartCount(0);
-    getDoc(doc(collection(db, "ganpati"), `${currentYear}`)).then((querySnapshot) => {
+    getDoc(doc(collection(db, "ganpati"), `${year}`)).then((querySnapshot) => {
       if (querySnapshot.exists()) {
         const data = querySnapshot.data();
         console.log("Document data:", data);
@@ -40,7 +43,7 @@ const Home = ({currentYear}) => {
       }
       setLoading(false);
     });
-  }, [currentYear]);
+  }, [year]);
   React.useEffect(()=> {
     console.log(' startCOunt ', startCount, allList.length);
     if (startCount < allList.length) {
@@ -62,14 +65,14 @@ const Home = ({currentYear}) => {
   });
 
   const ganpatiList = React.useMemo(()=> mandalList.map((element, key)=>
-    <GanpatiCard key={key} id={key} mandalData={element} currentYear={currentYear} />
+    <GanpatiCard key={key} id={key} mandalData={element} currentYear={year} />
   ), [mandalList]); 
   return (
   <>
     {loading && <Loader />}
     {!loading && <Box display="flex" flexDirection="column">
       {ganpatiList}
-      {ganpatiList.length === 0 && <NoData year={currentYear} />}
+      {ganpatiList.length === 0 && <NoData year={year} />}
       {showMore && <Button onClick={getNextData} color="primary">अजून पहा !</Button>}
       <NotificationDialog />
     </Box>}
