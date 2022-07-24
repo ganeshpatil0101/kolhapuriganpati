@@ -2,7 +2,10 @@ Netlify Build Status [![Netlify Status](https://api.netlify.com/api/v1/badges/39
 # Kolhapur Ganapati By Years
 [LIVE DEMO](http://kopganeshmurti.in/)
 #TODO
-# SEO Optimization
-# Share website URL
-# Share Photo
-# Years Link On Page
+## SEO Optimization
+## Share website URL
+## Share Photo
+## Years Link On Page
+## Check & Run AOT Build
+## Upgrade package versions
+## update browser list
