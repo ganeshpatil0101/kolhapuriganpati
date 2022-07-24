@@ -67,7 +67,7 @@ const NoData = ({year}) => {
        
         {redirect && <Redirect to={{
                 pathname:`/photo/${previousYear.current}`,
-                state:{ year:year },
+                state:{ year:previousYear.current },
               }} /> }
     </Box>
     </>

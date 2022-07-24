@@ -1,5 +1,5 @@
   
-import React from "react";
+import React, { useEffect } from "react";
 import { AppBar, Toolbar, Typography, Button } from "@material-ui/core";
 import { alpha, makeStyles } from "@material-ui/core/styles";
 import PropTypes from 'prop-types';
@@ -8,7 +8,7 @@ import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { getYears, getCurrentYear } from './Handlers';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 function ElevationScroll(props) {
   const { children, window } = props;
@@ -31,7 +31,14 @@ ElevationScroll.propTypes = {
 const Navbar = (props) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [year, setYear] = React.useState(getCurrentYear());
+  const [currentYear, setCurrentYear] = React.useState(getCurrentYear());
+  const navigat = useLocation();
+  useEffect(()=>{
+    const path = navigat.pathname.split('/');
+    if(path && path[2]) {
+      setCurrentYear(path[2]);
+    }
+  }, [navigat])
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -39,7 +46,7 @@ const Navbar = (props) => {
     setAnchorEl(null);
   };
   const changeUrl = (event, year) => {
-    setYear(year);
+    setCurrentYear(year);
     props.onSeletedYear(year);
     setAnchorEl(null);
     event.preventDefault();
@@ -56,7 +63,7 @@ const Navbar = (props) => {
       <AppBar position="fixed">
         <Toolbar>
           <Typography variant="h6" className={classes.title}>
-            कोल्हापुरी गणेश मूर्ती - {year}
+            कोल्हापुरी गणेश मूर्ती - {currentYear}
           </Typography>
           <div>
               <Button variant="contained" onClick={handleMenu}> Year </Button>
